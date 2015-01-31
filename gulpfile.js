@@ -8,33 +8,41 @@ var gulp = require('gulp'),
     mocha = require('gulp-mocha'),
     source = require('vinyl-source-stream');
 
+var PUBLIC_BUILD_DIR = './public/build',
+    CSS_DIR = PUBLIC_BUILD_DIR + '/css',
+    SRC_DIR = './public/src',
+    JS_SRC = ['src/**/*.js', 'src/**/*.jsx'],
+    APP_ROOT = SRC_DIR + '/app.jsx',
+    APP_BUNDLE = 'app.js';
+
 
 gulp.task('build', ['sass', 'fonts'], function () {
     var b = browserify({debug: true});
     b.transform(reactify);
-    b.add('./src/app.jsx');
+    b.add(APP_ROOT);
     return b.bundle()
-        .pipe(source('app.js'))
-        .pipe(gulp.dest('./build'))
+        .pipe(source(APP_BUNDLE))
+        .pipe(gulp.dest(PUBLIC_BUILD_DIR))
         .pipe(connect.reload());
 });
 
 gulp.task('sass', function () {
-    gulp.src('./scss/*.scss')
+    gulp.src('./public/scss/*.scss')
         .pipe(sass())
         .pipe(autoprefixer())
-        .pipe(gulp.dest('./build/css'))
+        .pipe(gulp.dest(CSS_DIR))
         .pipe(connect.reload());
 });
 
 gulp.task('fonts', function () {
-    gulp.src('./fonts/**/*')
-        .pipe(gulp.dest('./build/fonts'))
+    gulp.src('./public/fonts/**/*')
+        .pipe(gulp.dest('./public/build/fonts'))
         .pipe(connect.reload());
 });
 
 gulp.task('watch', ['build'], function () {
     connect.server({
+        root: './public/',
         host: 'localhost',
         port: 7683,
         livereload: {
@@ -42,7 +50,7 @@ gulp.task('watch', ['build'], function () {
         }
     });
     open('http://localhost:7683/');
-    gulp.watch(['src/**/*.js', 'src/**/*.jsx', 'index.html'], ['build']);
+    gulp.watch(JS_SRC.concat(['index.html']), ['build']);
     gulp.watch(['scss/**/*.scss'], ['sass']);
     gulp.watch(['fonts/**/*'], ['fonts'])
 });

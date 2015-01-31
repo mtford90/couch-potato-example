@@ -2,7 +2,7 @@
     'use strict';
 
     var auth = localStorage.getItem('auth'),
-        couchdb = require('../../couchdb-as-a-backend/api').couchdb,
+        couchdb = require('../../../couchdb-as-a-backend/api').couchdb,
         couchPotato = couchdb({auth: auth ? JSON.parse(auth) : null});
 
     var userActions = Reflux.createActions(['changeUser']),
