@@ -15,6 +15,10 @@ var PUBLIC_BUILD_DIR = './public/build',
     APP_ROOT = SRC_DIR + '/app.jsx',
     APP_BUNDLE = 'app.js';
 
+function swallowError(error) {
+    console.error(error.toString());
+    this.emit('end');
+}
 
 gulp.task('build', ['sass', 'fonts'], function () {
     var b = browserify({debug: true});
@@ -25,7 +29,6 @@ gulp.task('build', ['sass', 'fonts'], function () {
         .pipe(gulp.dest(PUBLIC_BUILD_DIR))
         .pipe(connect.reload());
 });
-
 
 gulp.task('sass', function () {
     gulp.src('./public/scss/*.scss')
@@ -41,7 +44,14 @@ gulp.task('fonts', function () {
         .pipe(connect.reload());
 });
 
-gulp.task('watch', ['build'], function () {
+// Run tests in the node environment.
+gulp.task('test', function () {
+    gulp.src('./test/**/*.spec.js')
+        .pipe(mocha({reporter: 'spec'}))
+        .on('error', swallowError)
+});
+
+gulp.task('watch', ['build', 'test'], function () {
     connect.server({
         root: './public/',
         host: 'localhost',
@@ -53,6 +63,7 @@ gulp.task('watch', ['build'], function () {
     open('http://localhost:7683/');
     gulp.watch(JS_SRC.concat(['index.html']), ['build']);
     gulp.watch(['scss/**/*.scss'], ['sass']);
-    gulp.watch(['fonts/**/*'], ['fonts'])
+    gulp.watch(['fonts/**/*'], ['fonts']);
+    gulp.watch(['cp.conf.js', 'test/**/*.spec.js'], ['test'])
 });
 

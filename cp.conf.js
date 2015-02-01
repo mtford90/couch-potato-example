@@ -1,22 +1,18 @@
 /* globals emit */
 
-/**
- * Declarative CouchDB configuration.
- *
- * Used by the command line tools to configure CouchDB appropriately.
- */
-
 module.exports = {
     databases: {
         db: {
             anonymousReads: false,
             anonymousWrites: false,
             designDocs: {
-                example: {
+                comments: {
                     views: {
-                        foo: {
+                        all: {
                             map: function (doc) {
-                                emit(doc._id, doc._rev)
+                                if (doc.type == 'comment') {
+                                    emit(doc._id, doc);
+                                }
                             }
                         }
                     }
