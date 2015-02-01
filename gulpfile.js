@@ -26,6 +26,7 @@ gulp.task('build', ['sass', 'fonts'], function () {
         .pipe(connect.reload());
 });
 
+
 gulp.task('sass', function () {
     gulp.src('./public/scss/*.scss')
         .pipe(sass())
