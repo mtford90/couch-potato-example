@@ -8,5 +8,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="couch-potato" />
+    <orderEntry type="library" name="Node.js v0.10.28 Core Modules" level="application" />
   </component>
 </module>
